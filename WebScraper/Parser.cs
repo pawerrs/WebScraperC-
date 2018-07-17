@@ -10,25 +10,24 @@ using Viewer.Models;
 
 namespace WebScraper
 {
-    /*
-     Parser strony kulturalnie.waw.pl
-     */
     public class Parser
     {
         HTTPAgent httpAgent = new HTTPAgent();
+        Geolocation geolocation = new Geolocation();
         public List<Event> events = new List<Event>();
         string[] urls = {
             "http://kulturalnie.waw.pl/",
             "http://kulturalnie.waw.pl/2/",
             "http://kulturalnie.waw.pl/3/"
+
         };
 
-        public void Pars()
+        public async void ParsKulturalnie()
         {
             foreach (var url in urls)
             {
 
-                Task<string> data = httpAgent.GetAllEvents(url);
+                Task<string> data = httpAgent.GetString(url);
 
                 var result = data.Result;
 
@@ -41,28 +40,22 @@ namespace WebScraper
 
                     Event singleEvent = new Event();
                     singleEvent.Id = i;
+                    singleEvent.Place = node.SelectSingleNode(".//li[@class='location']").InnerText.Trim();
+                    //var eventLatLng = await geolocation.GetLatitudeandLongtitude(singleEvent.Place);
+                    // singleEvent.Latitude = eventLatLng.latitude;
+                    //singleEvent.Longtitude = eventLatLng.longtitude;
                     singleEvent.Date = node.SelectSingleNode(".//span[@class='date']").InnerText.Trim();
                     singleEvent.Category = node.SelectSingleNode(".//li[@class='category']").InnerText.Trim();
                     singleEvent.Name = node.SelectSingleNode(".//h2[@itemprop='name']").InnerText.Trim();
-                    singleEvent.Place = node.SelectSingleNode(".//li[@class='location']").InnerText.Trim();
+
                     singleEvent.Information = node.SelectSingleNode(".//div[@class='eventDescription']").InnerText.TrimStart();
                     singleEvent.Category = node.SelectSingleNode(".//li[@class='tickets']").InnerText.Trim();
                     events.Add(singleEvent);
                     i++;
+
                 }
             }
 
-            //foreach (var eventcik in events)
-            //{
-            //    Event eventt = events[0];
-            //    //    Console.WriteLine(eventt.Id + " " + eventt.Name + " " + eventt.Information + " " + eventt.Place + " " +
-            //    //        eventt.Category + " " + eventt.Date + " " + eventt.Price);
-            //    //}
-
-            //    File.WriteAllText("E:\\TEST.txt", eventt.Information);
-            //    //Console.Write(eventt.Information);
-            //    Console.ReadLine();
-            //}
         }
     }
 }
