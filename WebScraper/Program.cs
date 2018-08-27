@@ -12,7 +12,9 @@ namespace WebScraper
         static void Main(string[] args)
         {
             Parser parser = new Parser();
-            parser.ParsKulturalnie();
+            parser.ParseKulturalnie();
+            
+            parser.ParseGoingApp();
             Console.ReadKey();
         }
     }
